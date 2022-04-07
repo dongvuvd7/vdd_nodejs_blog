@@ -1,26 +1,38 @@
-const Course = require('../models/Course');
+const Course = require("../models/Course");
+const { multipleMongooseToObject } = require('../../../ulti/mongoose');
 
 class SiteController {
-  // [GET] /
-  index(req, res) {
-    Course.find({}, function (err, courses) {
-      if(!err) res.json(courses);
-      else res.status(400).json({error: 'ERROR !'});
-    });
+    // [GET] /
+    index(req, res, next) {
+        // Course.find({}, function (err, courses) {
+        //   if(!err) res.json(courses);
+        //   else {
+        //     next(err);
+        //   }
+        // });
 
-    // res.render("home");
-  }
+        Course.find({})
+            .then((courses) => {
+                res.render("home", {
+                    title: "TEST TITLE",
+                    courses: multipleMongooseToObject(courses), // tuowng tu viet course: courses
+                });
+            })
+            .catch(next);
 
-  // [GET] /search
-  search(req, res) {
-    res.render("search");
-  }
+        // res.render("home");
+    }
 
-  // app.post("/search", (req, res) => {
-  //     console.log(req.body);
+    // [GET] /search
+    search(req, res) {
+        res.render("search");
+    }
 
-  //     res.send(req.body);
-  //   });
+    // app.post("/search", (req, res) => {
+    //     console.log(req.body);
+
+    //     res.send(req.body);
+    //   });
 }
 
 module.exports = new SiteController();
