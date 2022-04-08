@@ -1,0 +1,128 @@
+<div class="mt-4">
+    <div>
+        <h3>KHÓA HỌC ĐÃ XÓA</h3>
+        <a href="/me/stored/courses">Quay lại Danh sách khóa học của tôi</a>
+    </div>
+    
+
+    <table class="table mt-4">
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Tên Khóa học</th>
+                <th scope="col">Cấp độ</th>
+                <th scope="col" colspan="2">Thời gian tạo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each courses}}
+                <tr>
+                    <th scope="row">{{sum @index 1}}</th>
+                    <td>{{this.name}}</td>
+                    <td>{{this.level}}</td>
+                    <td>{{this.createdAt}}</td>
+                    <td>
+                        <a 
+                            href="" 
+                            class="btn-restore"
+                            data-id="{{this._id}}"
+                        >
+                            Khôi phục
+                        </a>
+                        <a
+                            href=""
+                            style="color: rgb(212, 53, 21);"
+                            data-toggle="modal"
+                            data-target="#delete-course-modal"
+                            data-id="{{this._id}}"
+                        >
+                            Xóa vĩnh viễn
+                        </a>
+                    </td>
+                </tr>
+            {{else}}
+            <tr>
+                <td colspan="5">
+                    <div class="alert alert-info">
+                        Không có khóa học nào trong thùng rác
+                    </div>
+                    <!-- back to list course -->
+                    <a href="/me/stored/courses" class="btn btn-primary">Quay lại Danh sách khóa học của tôi</a>
+                </td>
+            </tr>
+            
+            {{/each}}
+        </tbody>
+    </table>
+
+</div>
+
+<!-- Modal -->
+<div
+    class="modal fade"
+    id="delete-course-modal"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="exampleModalLabel"
+    aria-hidden="true"
+>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Xóa Khóa học</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn xóa khóa học này không?
+            </div>
+            <div class="modal-footer">
+                <button id = "btn-delete-course" type="button" class="btn btn-primary">Xóa</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{!-- Delete form (hidden) --}}
+<form name="delete-course-form" method="post">
+</form>
+
+{{!-- Restore form (hidden) --}}
+<form name="restore-course-form" method="post">
+</form>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function(){
+
+        var courseId;
+        var deleteCourseForm = document.forms['delete-course-form'];
+        var restoreCourseForm = document.forms['restore-course-form'];
+        var restoreBtn = $('.btn-restore');
+
+        $('#delete-course-modal').on('show.bs.modal', function (event) { 
+            var button = $(event.relatedTarget) 
+            courseId = button.data('id')
+            //console.log(id, 'id to delete');
+        });
+
+        var btnDeleteCourse = document.getElementById('btn-delete-course');
+        btnDeleteCourse.onclick = function() {
+            deleteCourseForm.action = '/courses/' + courseId + "/force?_method=DELETE";
+            deleteCourseForm.submit();
+        }
+
+        restoreBtn.click(function(e){
+            e.preventDefault();
+            var courseId = $(this).data('id');
+            console.log(courseId + " restored");
+            restoreCourseForm.action = '/courses/' + courseId + "/restore?_method=PATCH";
+            restoreCourseForm.submit();
+        })
+
+    });
+
+
+</script>
